@@ -1,4 +1,3 @@
-use std::fs;
 use std::collections::HashSet;
 
 fn parse(s: &str) -> Vec<i64> {
@@ -21,14 +20,10 @@ fn part2(s: &str) -> i64 {
     let mut cur = 0;
     let mut seen = HashSet::<i64>::new();
     seen.insert(cur); // Not really a better way to initialize a map with default values
-    loop {
-        for n in frequencies.iter() {
-            cur += n;
-            if !seen.insert(cur) {
-                return cur;
-            }
-        }
-    }
+    frequencies.iter().cycle().find_map(|n| {
+        cur += n;
+        seen.replace(cur)
+    }).unwrap()
 }
 
 #[cfg(test)]
@@ -60,9 +55,7 @@ mod tests {
 }
 
 fn main() {
-    let filename = "input";
-    let contents = fs::read_to_string(filename)
-        .expect("Something went wrong reading the file");
-    println!("part1: {}", part1(&contents));
-    println!("part2: {}", part2(&contents));
+    let input = include_str!("../input");
+    println!("part1: {}", part1(&input));
+    println!("part2: {}", part2(&input));
 }
